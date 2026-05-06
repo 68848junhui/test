@@ -1,0 +1,20 @@
+name: Supabase Keepalive
+
+on:
+  schedule:
+    - cron: "0 3 * * *"   # 每天 UTC 3点（北京时间11点）
+  workflow_dispatch:      # 支持手动触发
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call Supabase (Insert Keepalive)
+        run: |
+          curl -X POST "${{ secrets.SUPABASE_URL }}/rest/v1/keepalive" \
+          -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+          -H "Content-Type: application/json" \
+          -H "Prefer: return=minimal" \
+          -d '{"id":1,"updated_at":"now()"}'
