@@ -1,20 +1,32 @@
-name: Supabase Keepalive
+name: Supabase Keepalive (Ultimate)
 
 on:
   schedule:
-    - cron: "0 3 * * *"   # 每天 UTC 3点（北京时间11点）
-  workflow_dispatch:      # 支持手动触发
+    - cron: "0 */12 * * *"   # 每12小时一次（强烈推荐）
+  workflow_dispatch:
 
 jobs:
   keepalive:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Call Supabase (Insert keepalive_single)
+      - name: Keep Supabase Alive
         run: |
-          curl -X POST "${{ secrets.SUPABASE_URL }}/rest/v1/keepalive" \
-          -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-          -H "Content-Type: application/json" \
-          -H "Prefer: return=minimal" \
-          -d '{"id":1,"updated_at":"now()"}'
+          echo "Pinging Supabase..."
+
+          response=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "${{ secrets.SUPABASE_URL }}/rest/v1/keepalive_single" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: resolution=merge-duplicates" \
+            -d '{"id":1}')
+
+          echo "HTTP Status: $response"
+
+          if [ "$response" -ne 201 ] && [ "$response" -ne 200 ]; then
+            echo "❌ Keepalive failed"
+            exit 1
+          fi
+
+          echo "✅ Supabase is alive"
