@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Call Supabase (Insert Keepalive)
+      - name: Call Supabase (Insert keepalive_single)
         run: |
           curl -X POST "${{ secrets.SUPABASE_URL }}/rest/v1/keepalive" \
           -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
