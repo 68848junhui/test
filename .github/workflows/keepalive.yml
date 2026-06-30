@@ -2,7 +2,7 @@ name: Supabase Keepalive (Ultimate)
 
 on:
   schedule:
-    - cron: "0 */12 * * *"   # 每12小时一次（强烈推荐）
+    - cron: "0 0 * * *"   # 每天8点
   workflow_dispatch:
 
 jobs:
